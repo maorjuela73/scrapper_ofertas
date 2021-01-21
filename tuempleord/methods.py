@@ -1,4 +1,5 @@
 from selenium import webdriver
+from time import sleep
 import json
 from bs4 import BeautifulSoup
 
@@ -15,7 +16,7 @@ def get_all_areas(driver):
         for j in i:
             area  = {
                 'nombre':j ,
-                'valor':i['value']
+                'value':i['value']
             }
             areas.append(area)
 
@@ -35,11 +36,19 @@ def get_all_provincias(driver):
     return(provincias)
 
 
+def get_vacantes(area_value , provincia):
+    driver.get('https://www.tuempleord.do/busca-tu-trabajo/?categoria={}&provincia={}'.format(area_value , provincia))
+
+
+
 driver = webdriver.Chrome()
 
 areas = get_all_areas(driver)
 provincias = get_all_provincias(driver)
-print(areas)
+
+for i in areas:
+    for j in provincias:
+        get_vacantes(i['value'] , j)
 driver.close()
 
 
