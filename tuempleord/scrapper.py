@@ -90,8 +90,8 @@ provincias = get_all_provincias(driver)
 
 total = (len(areas) * len(provincias))
 barrita = Bar("progress ..." , max=total)
-for i in provincias:
-    for j in areas:
+for j in areas:
+    for i in provincias:
         vacantes = (get_vacantes(driver , j['value'] , i ))
         if(vacantes != []):
             with open("vacantes/{}_{}_en_{}.json".format(j['value'] , j['nombre'].replace(" ","") , i.replace(" " , "")) , 'w') as vacantejson:
