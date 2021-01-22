@@ -1,4 +1,5 @@
 from selenium import webdriver
+from progress.bar import Bar
 from time import sleep
 import json
 from bs4 import BeautifulSoup
@@ -88,19 +89,18 @@ areas = get_all_areas(driver)
 provincias = get_all_provincias(driver)
 
 total = (len(areas) * len(provincias))
-cont = 0
+barrita = Bar("progress ..." , max=total)
 for i in provincias:
     for j in areas:
         vacantes = (get_vacantes(driver , j['value'] , i ))
         if(vacantes != []):
             print(vacantes)
-            with open("vacantes/{}_en_{}.json".format(j['nombre'].replace(" ","") , i.replace(" " , "")) , 'w') as vacantejson:
+            with open("vacantes/{}_{}_en_{}.json".format(j['value'] , j['nombre'].replace(" ","") , i.replace(" " , "")) , 'w') as vacantejson:
                 json.dump(vacantes , vacantejson)
         else:
-            with open("vacantes_vacias/{}_en_{}.json".format(j['nombre'].replace(" ","") , i.replace(" " , "")) , 'w') as vacantejson:
+            with open("vacantes_vacias/{}_{}_en_{}.json".format(j['value'], j['nombre'].replace(" ","") , i.replace(" " , "")) , 'w') as vacantejson:
                 json.dump(vacantes , vacantejson)
-        print("progres ... {}/{}".format(cont , total))
-        cont += 1
+        barrita.next()
 
 
 driver.close()
