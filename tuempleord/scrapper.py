@@ -1,8 +1,9 @@
 from selenium import webdriver
 from progress.bar import Bar
-from time import sleep
 import json
 from bs4 import BeautifulSoup
+
+
 
 
 #este metodo agarra todas las areas de trabajo y retorna una lista con ellas y su respectivo valor   |jue ene 21 18:07:09 -05 2021|
@@ -22,8 +23,6 @@ def get_all_areas(driver):
             areas.append(area)
 
     return(areas)
-
-
 
 
 def scroll(driver):
@@ -47,61 +46,70 @@ def get_all_provincias(driver):
     return(provincias)
 
 
-def get_vacantes(driver , area_value , provincia):
-    driver.get('https://www.tuempleord.do/busca-tu-trabajo/?categoria={}&provincia={}'.format(area_value , provincia))
-#    driver.get('https://www.tuempleord.do/busca-tu-trabajo/?categoria=17&provincia=haina')
-    sleep(1)
-    scroll(driver)
-    hayalgo = True
-    try :
-        driver.find_element_by_xpath('/html/body/div[8]/div/div[1]/article[1]/div[2]/div/p')
-        hayalgo = True
-    except:
-        hayalgo = False
 
-    err = 0
-    i = 1
-    trabajos = []
-    while(err < 10):
+
+#dada una secion del paginador   |vie ene 22 10:23:43 -05 2021|
+def get_all_vacantes(driver , paginador ):
+    driver.get('https://www.tuempleord.do/page/{}/'.format(paginador))
+    body = driver.find_element_by_xpath('/html/body').get_attribute('innerHTML')
+    soup = BeautifulSoup(body , 'lxml')
+    resumidos = soup.findAll('h2' , {'class':'resumido'})
+
+    vacantes = []
+    for i in resumidos:
+        titulo = i.getText()
+#        url = i['href']
+        for j in i:
+            url = j['href']
+        vacante = {
+            'titulo':titulo,
+            'url':url
+        }
+        vacantes.append(vacante)
+    return(vacantes)
+
+
+def get_info_vacante(driver, vacante):
+    driver.get(vacante['url'])
+    contenido = driver.find_element_by_xpath('/html/body/div[8]/div/div[1]/article/div[1]/div[2]')
+    html_contenido = contenido.get_attribute('innerHTML')
+    soup = BeautifulSoup(html_contenido , 'lxml')
+    texto = soup.findAll('p')
+
+    total = {
+        'titulo':vacante['titulo'],
+        'url':vacante['url']
+    }
+    for i in texto:
+        descripcion = {}
+        elemento = i.getText()
+        lista = elemento.split('\n')
         try:
-            sleep(0.1)
-            elemento = driver.find_element_by_xpath('/html/body/div[8]/div/div[1]/article[{}]/div[2]/div/p'.format(i))
-            scroll(driver)
-            trabajos.append(elemento.get_attribute('innerText'))
-            err = 0
-            i += 1
+            descripcion[lista[0]] = lista[1]
+            total[lista[0]] = lista[1]
         except:
-            sleep(0.1)
-            err += 1
-            i += 1
             pass
-    return(trabajos)
+    return(total)
 
 
 
 
-
-
-
+cont = 1
 driver = webdriver.Chrome()
+maxi = 1896
+barrita = Bar("progres ..." , max = maxi)
+for i in range(1,maxi):
+    vacantes = get_all_vacantes(driver , i)
+    for j in vacantes:
+        puesto = get_info_vacante(driver , j)
+        nombre = 'vacantes/vacante{0:04d}.json'.format(cont)
+        cont += 1
+        with open(nombre,  'w') as archivo_json:
+            json.dump(puesto , archivo_json)
 
-areas = get_all_areas(driver)
-provincias = get_all_provincias(driver)
-
-total = (len(areas) * len(provincias))
-barrita = Bar("progress ..." , max=total)
-for j in areas:
-    for i in provincias:
-        vacantes = (get_vacantes(driver , j['value'] , i ))
-        if(vacantes != []):
-            with open("vacantes/{}_{}_en_{}.json".format(j['value'] , j['nombre'].replace(" ","") , i.replace(" " , "")) , 'w') as vacantejson:
-                json.dump(vacantes , vacantejson)
-        else:
-            with open("vacantes_vacias/{}_{}_en_{}.json".format(j['value'], j['nombre'].replace(" ","") , i.replace(" " , "")) , 'w') as vacantejson:
-                json.dump(vacantes , vacantejson)
         barrita.next()
 
-
 driver.close()
+
 
 
