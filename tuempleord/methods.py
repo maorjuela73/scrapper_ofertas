@@ -47,19 +47,16 @@ def get_all_provincias(driver):
 
 
 def get_vacantes(driver , area_value , provincia):
-#    driver.get('https://www.tuempleord.do/busca-tu-trabajo/?categoria={}&provincia={}'.format(area_value , provincia))
-    driver.get('https://www.tuempleord.do/busca-tu-trabajo/?categoria=17&provincia=haina')
+    driver.get('https://www.tuempleord.do/busca-tu-trabajo/?categoria={}&provincia={}'.format(area_value , provincia))
+#    driver.get('https://www.tuempleord.do/busca-tu-trabajo/?categoria=17&provincia=haina')
     sleep(1)
     scroll(driver)
     hayalgo = True
-    print('buena')
     try :
         driver.find_element_by_xpath('/html/body/div[8]/div/div[1]/article[1]/div[2]/div/p')
         hayalgo = True
-        print("hay algo")
     except:
         hayalgo = False
-        print("no hay nada")
 
     err = 0
     i = 1
@@ -69,7 +66,6 @@ def get_vacantes(driver , area_value , provincia):
             sleep(0.1)
             elemento = driver.find_element_by_xpath('/html/body/div[8]/div/div[1]/article[{}]/div[2]/div/p'.format(i))
             scroll(driver)
-            print(elemento.get_attribute('innerText'))
             trabajos.append(elemento.get_attribute('innerText'))
             err = 0
             i += 1
@@ -86,6 +82,8 @@ def get_vacantes(driver , area_value , provincia):
 
 
 
+
+#test   |jue ene 21 19:23:07 -05 2021|
 driver = webdriver.Chrome()
 
 areas = get_all_areas(driver)
