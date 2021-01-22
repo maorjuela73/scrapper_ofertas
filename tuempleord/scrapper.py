@@ -82,8 +82,6 @@ def get_vacantes(driver , area_value , provincia):
 
 
 
-
-#test   |jue ene 21 19:23:07 -05 2021|
 driver = webdriver.Chrome()
 
 areas = get_all_areas(driver)
@@ -96,6 +94,11 @@ for i in provincias:
         vacantes = (get_vacantes(driver , j['value'] , i ))
         if(vacantes != []):
             print(vacantes)
+            with open("vacantes/{}_en_{}.json".format(j['nombre'].replace(" ","") , i.replace(" " , "")) , 'w') as vacantejson:
+                json.dump(vacantes , vacantejson)
+        else:
+            with open("vacantes_vacias/{}_en_{}.json".format(j['nombre'].replace(" ","") , i.replace(" " , "")) , 'w') as vacantejson:
+                json.dump(vacantes , vacantejson)
 
 driver.close()
 
