@@ -1,3 +1,4 @@
+import base64
 from selenium import webdriver
 import json
 import requests as r
@@ -29,10 +30,15 @@ def get_info_url(url):
     desc = soup.find('ul' ,{'class':'p0 m0'})
 
     titulo = (tit.getText())
-    descripcion = desc
+    descripcion = desc.encode('ascii')
+    base64_bytes = base64.b64encode(descripcion)
+    base64_message = base64_bytes.decode('ascii')
+    descripcion_encoded = base64_message
+    #codifique esta vuelta en base64 para poderlo subir como json   |vie ene 22 16:12:01 -05 2021
+
     info = {
         'titulo':titulo,
-        'descripcion':desc
+        'descripcion':descripcion_encoded
     }
 
     return(info)
@@ -72,17 +78,26 @@ driver = webdriver.Chrome()
 
 err = 0
 i = 1
+cont = 0
 while(err < 10):
-    nombre = 'vacantes/vacante_{}.json'.format(i)
-    ofertas = get_ofertas(driver , i)
-    i+=1
-    for j in ofertas:
-        info = get_info_url(j)
-        print(info)
-        #with open(nombre , 'w') as json_file:
-        #    json.dump(info , json_file)
-        #print(i)
-    err = 0
+    try:
+        ofertas = get_ofertas(driver , i)
+        i+=1
+        for j in ofertas:
+            nombre = 'vacantes/vacante_{0:05d}.json'.format(cont)
+            info = get_info_url(j)
+            with open(nombre , 'w') as json_file:
+                json.dump(info , json_file)
+                print("saved")
+            cont += 1
+            print(cont)
+        err = 0
+    except:
+        err += 1
+        if(err%5 == 0):
+            cont+=1
+            i+=1
+        pass
 
 
 
