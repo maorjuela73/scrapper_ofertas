@@ -94,7 +94,6 @@ for i in provincias:
     for j in areas:
         vacantes = (get_vacantes(driver , j['value'] , i ))
         if(vacantes != []):
-            print(vacantes)
             with open("vacantes/{}_{}_en_{}.json".format(j['value'] , j['nombre'].replace(" ","") , i.replace(" " , "")) , 'w') as vacantejson:
                 json.dump(vacantes , vacantejson)
         else:
