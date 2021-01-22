@@ -29,6 +29,33 @@ def get_info_url(url):
     caja = soup.findAll('ul' ,{'class':'p0 m0'})
     tit = soup.find('h1' ,{'class':'m0'})
     desc = soup.find('ul' ,{'class':'p0 m0'})
+    header = soup.find('p' , {"class":'fc80 mt5'})
+
+
+    texto = header.getText()
+    texto = texto.split('\n')
+    algo =1
+
+    if(len(texto) == 7):
+        salario = texto[1]
+        region = texto[3]
+        ciudad = texto[4]
+        hora = texto[5]
+
+    else:
+        salario = "no especificado"
+        region = texto[2]
+        ciudad = texto[3]
+        hora = texto[4]
+
+    #salario = salario.strip()
+    #region = region.replace("  ", "")
+    #ciudad = ciudad.replace("  ", "")
+    #hora = hora.replace("  ", "")
+    salario = ("salario"  , str(salario).strip())
+    region = ("region " , str(region).strip())
+    ciudad = ("ciudad" , str(ciudad).strip())
+    hora = ("hora" , str(hora).strip())
 
     titulo = (tit.getText())
     array = []
@@ -39,7 +66,11 @@ def get_info_url(url):
     info = {
         'titulo':titulo,
         'descripcion':array,
-        'fecha agregado':str(datetime.datetime.now())
+        'fecha agregado':str(datetime.datetime.now()),
+        'salario':salario,
+        'region':region,
+        "ciudad":ciudad,
+        'hora':hora
     }
 
     return(info)
@@ -76,7 +107,6 @@ def get_info_url(url):
 #MAIN   |vie ene 22 14:57:42 -05 2021|
 
 driver = webdriver.Chrome()
-
 err = 0
 i = 1
 cont = 0
