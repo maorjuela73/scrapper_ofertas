@@ -87,8 +87,8 @@ driver = webdriver.Chrome()
 areas = get_all_areas(driver)
 provincias = get_all_provincias(driver)
 
-print(len(areas) * len(provincias))
-
+total = (len(areas) * len(provincias))
+cont = 0
 for i in provincias:
     for j in areas:
         vacantes = (get_vacantes(driver , j['value'] , i ))
@@ -99,6 +99,9 @@ for i in provincias:
         else:
             with open("vacantes_vacias/{}_en_{}.json".format(j['nombre'].replace(" ","") , i.replace(" " , "")) , 'w') as vacantejson:
                 json.dump(vacantes , vacantejson)
+        print("progres ... {}/{}".format(cont , total))
+        cont += 1
+
 
 driver.close()
 
