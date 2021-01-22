@@ -1,4 +1,5 @@
 import base64
+import datetime
 from selenium import webdriver
 import json
 import requests as r
@@ -30,15 +31,15 @@ def get_info_url(url):
     desc = soup.find('ul' ,{'class':'p0 m0'})
 
     titulo = (tit.getText())
-    descripcion = desc.encode('ascii')
-    base64_bytes = base64.b64encode(descripcion)
-    base64_message = base64_bytes.decode('ascii')
-    descripcion_encoded = base64_message
+    array = []
+    for i in desc:
+        array.append(str(i))
     #codifique esta vuelta en base64 para poderlo subir como json   |vie ene 22 16:12:01 -05 2021
 
     info = {
         'titulo':titulo,
-        'descripcion':descripcion_encoded
+        'descripcion':array,
+        'fecha agregado':str(datetime.datetime.now())
     }
 
     return(info)
@@ -94,10 +95,8 @@ while(err < 10):
         err = 0
     except:
         err += 1
-        if(err%5 == 0):
-            cont+=1
-            i+=1
-        pass
+        i += 1
+        cont += 1
 
 
 
