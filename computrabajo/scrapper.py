@@ -1,4 +1,6 @@
 from selenium import webdriver
+import json
+import requests as r
 from time import sleep
 from bs4 import BeautifulSoup
 
@@ -16,6 +18,24 @@ def get_ofertas(driver, paginador):
         links.append(link)
 
     return(links)
+
+def get_info_url(url):
+    req = r.get(url).content
+
+    soup = BeautifulSoup(req , 'lxml')
+
+    caja = soup.findAll('ul' ,{'class':'p0 m0'})
+    tit = soup.find('h1' ,{'class':'m0'})
+    desc = soup.find('ul' ,{'class':'p0 m0'})
+
+    titulo = (tit.getText())
+    descripcion = desc
+    info = {
+        'titulo':titulo,
+        'descripcion':desc
+    }
+
+    return(info)
 
 
 #esta verga funcionaba pero dejó de funcionar entonces estoy viendo que pasa   |vie ene 22 15:08:06 -05 2021|
@@ -50,7 +70,20 @@ def get_ofertas(driver, paginador):
 
 driver = webdriver.Chrome()
 
-ofertas = get_ofertas(driver , cont)
+err = 0
+i = 1
+while(err < 10):
+    nombre = 'vacantes/vacante_{}.json'.format(i)
+    ofertas = get_ofertas(driver , i)
+    i+=1
+    for j in ofertas:
+        info = get_info_url(j)
+        print(info)
+        #with open(nombre , 'w') as json_file:
+        #    json.dump(info , json_file)
+        #print(i)
+    err = 0
+
 
 
 driver.close()
