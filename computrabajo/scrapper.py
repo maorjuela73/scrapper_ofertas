@@ -39,6 +39,7 @@ def get_info_url(url):
         region = texto[2]
         ciudad = texto[3]
         hora = texto[4]
+
     #salario = salario.strip()
     #region = region.replace("  ", "")
     #ciudad = ciudad.replace("  ", "")
@@ -47,12 +48,19 @@ def get_info_url(url):
     region = ("region " , str(region).strip())
     ciudad = ("ciudad" , str(ciudad).strip())
     hora = ("hora" , str(hora).strip())
+    salario = salario[1]
+    region = region[1]
+    ciudad = ciudad[1]
+    hora = hora[1]
+
+    print(salario , region , ciudad , hora)
     titulo = (tit.getText())
     array = []
     for i in desc:
         array.append(str(i))
     #codifique esta vuelta en base64 para poderlo subir como json   |vie ene 22 16:12:01 -05 2021
     info = {
+        'url':url,
         'titulo':titulo,
         'descripcion':array,
         'fecha agregado':str(datetime.datetime.now()),
