@@ -77,7 +77,6 @@ def get_info_url(url):
     return(info)
 
 
-#esta verga funcionaba pero dejó de funcionar entonces estoy viendo que pasa   |vie ene 22 15:08:06 -05 2021|
 #def get_info(driver , link):
     #driver.get(link)
     #sleep(1)
