@@ -12,42 +12,33 @@ def get_ofertas(driver, paginador):
     body_html = driver.find_element_by_xpath('/html/body/div[1]/section').get_attribute('innerHTML')
     soup = BeautifulSoup(body_html  , 'lxml')
     elementos = soup.findAll('a' , {'class':'js-o-link'})
-
     links = []
-
     for i in elementos:
         link = 'https://www.computrabajo.com.do/' + i['href']
         links.append(link)
-
     return(links)
+
 
 def get_info_url(url):
     req = r.get(url).content
-
     soup = BeautifulSoup(req , 'lxml')
-
     caja = soup.findAll('ul' ,{'class':'p0 m0'})
     tit = soup.find('h1' ,{'class':'m0'})
     desc = soup.find('ul' ,{'class':'p0 m0'})
     header = soup.find('p' , {"class":'fc80 mt5'})
-
-
     texto = header.getText()
     texto = texto.split('\n')
     algo =1
-
     if(len(texto) == 7):
         salario = texto[1]
         region = texto[3]
         ciudad = texto[4]
         hora = texto[5]
-
     else:
         salario = "no especificado"
         region = texto[2]
         ciudad = texto[3]
         hora = texto[4]
-
     #salario = salario.strip()
     #region = region.replace("  ", "")
     #ciudad = ciudad.replace("  ", "")
@@ -56,13 +47,11 @@ def get_info_url(url):
     region = ("region " , str(region).strip())
     ciudad = ("ciudad" , str(ciudad).strip())
     hora = ("hora" , str(hora).strip())
-
     titulo = (tit.getText())
     array = []
     for i in desc:
         array.append(str(i))
     #codifique esta vuelta en base64 para poderlo subir como json   |vie ene 22 16:12:01 -05 2021
-
     info = {
         'titulo':titulo,
         'descripcion':array,
@@ -72,7 +61,6 @@ def get_info_url(url):
         "ciudad":ciudad,
         'hora':hora
     }
-
     return(info)
 
 
