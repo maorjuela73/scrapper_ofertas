@@ -14,7 +14,7 @@ driver = webdriver.Chrome()
 
 cont = 1
 err = 0
-total = 0
+total = 1
 
 driver.get('http://empleateya.mt.gob.do/#/empleo/buscar-empleo')
 
