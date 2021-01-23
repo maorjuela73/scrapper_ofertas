@@ -28,19 +28,21 @@ for j in range(0,10):
         try:
             provincia_box = driver.find_element_by_xpath('/html/body/app-root/app-buscar-empleo/main/article/section[1]/article[2]/div/div[{}]/div[2]/ul/li[1]'.format(i))
             provincia = provincia_box.get_attribute('innerText')
-            provincia = provincia.replace("Provincia:", "")
+            provincia = provincia.replace("Provincia:" ,"")
         except:
             provincia = "no especificado"
         try:
             jornada_box = driver.find_element_by_xpath('/html/body/app-root/app-buscar-empleo/main/article/section[1]/article[2]/div/div[{}]/div[2]/ul/li[2]'.format(i))
             jornada = jornada_box.get_attribute('innerText')
-            jornada = jornada.replace("Jornada:" , "")
+            jornada = jornada.replace('Jornada:' , "")
+            if(jornada ==""):
+                jornada = "no especificada"
         except:
             jornada = "no especificada"
         try:
             salario_box = driver.find_element_by_xpath('/html/body/app-root/app-buscar-empleo/main/article/section[1]/article[2]/div/div[{}]/div[2]/ul/li[3]'.format(i))
             salario = salario_box.get_attribute('innerText')
-            salario = salario.replace("Salario:", "")
+            salario = salario.replace("Salario:" , "")
         except:
             salario = 'no especificado'
         print(nombre , provincia , jornada , salario)
