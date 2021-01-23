@@ -36,7 +36,6 @@ for j in range(0,ultimo):
     sleep(1)
     try:
         for i in range(1,7):
-            print(i)
             elem = driver.find_element_by_xpath('/html/body/app-root/app-buscar-empleo/main/article/section[1]/article[2]/div/div[{}]/div[2]'.format(i))
             nombre_box = driver.find_element_by_xpath('/html/body/app-root/app-buscar-empleo/main/article/section[1]/article[2]/div/div[{}]/div[2]/h3'.format(i))
             nombre = nombre_box.get_attribute('innerText')
@@ -76,8 +75,8 @@ for j in range(0,ultimo):
             guardar(empleo , total)
             afuera = driver.find_element_by_xpath('/html/body/app-root/app-buscar-empleo/main/article/section[1]/article[2]/div/div[8]/section[1]/span')
             afuera.click()
+            print(total , i)
             total += 1
-            print(total)
             sleep(0.3)
 
         next_button = driver.find_element_by_xpath('/html/body/app-root/app-buscar-empleo/main/article/section[2]/div[13]/button')
