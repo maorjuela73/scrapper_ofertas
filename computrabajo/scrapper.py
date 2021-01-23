@@ -28,6 +28,10 @@ def get_info_url(url):
     header = soup.find('p' , {"class":'fc80 mt5'})
     texto = header.getText()
     texto = texto.split('\n')
+    emp = soup.find('a' , {'id':'urlverofertas'})
+    empresa = emp.getText()
+    url_empresa = emp['href']
+    url_empresa = 'https://www.computrabajo.com.do/' + url_empresa
     algo =1
     if(len(texto) == 7):
         salario = texto[1]
@@ -53,14 +57,15 @@ def get_info_url(url):
     ciudad = ciudad[1]
     hora = hora[1]
 
-    print(salario , region , ciudad , hora)
     titulo = (tit.getText())
     array = []
     for i in desc:
         array.append(str(i))
     #codifique esta vuelta en base64 para poderlo subir como json   |vie ene 22 16:12:01 -05 2021
     info = {
-        'url':url,
+        'url_de_la_empresa':url_empresa,
+        'empresa':empresa,
+        'url_de_la_vacante':url,
         'titulo':titulo,
         'descripcion':array,
         'fecha agregado':str(datetime.datetime.now()),
@@ -120,6 +125,7 @@ while(err < 10):
             print(cont)
         err = 0
     except:
+        print("error" , err)
         err += 1
         i += 1
         cont += 1
