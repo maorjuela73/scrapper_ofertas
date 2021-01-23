@@ -18,7 +18,7 @@ total = 1
 
 driver.get('http://empleateya.mt.gob.do/#/empleo/buscar-empleo')
 
-total = 0
+total = 1
 for j in range(0,10):
     for i in range(1,7):
         print(i)
