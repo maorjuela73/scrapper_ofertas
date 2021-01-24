@@ -127,10 +127,10 @@ while(err < 10):
             print(cont)
         err = 0
     except:
-        print("error" , err)
         err += 1
         i += 1
-        cont += 1
+        cont +=1
+        print("error" , err)
 
 
 
