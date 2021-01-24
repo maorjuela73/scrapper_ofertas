@@ -1,3 +1,4 @@
+from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
 from progress.bar import Bar
 import json
@@ -94,22 +95,28 @@ def get_info_vacante(driver, vacante):
 
 
 
-cont = 1
-driver = webdriver.Chrome()
-maxi = 1896
-barrita = Bar("progres ..." , max = maxi)
-for i in range(1,maxi):
-    vacantes = get_all_vacantes(driver , i)
-    for j in vacantes:
-        puesto = get_info_vacante(driver , j)
-        nombre = 'vacantes/vacante{0:04d}.json'.format(cont)
-        cont += 1
-        with open(nombre,  'w') as archivo_json:
-            json.dump(puesto , archivo_json)
 
-        barrita.next()
+try:
+    options = Options()
+    options.headless = True
+    cont = 1
+    driver = webdriver.Chrome(options = options)
+    maxi = 1896
+    barrita = Bar("progres ..." , max = maxi)
+    for i in range(1,maxi):
+        vacantes = get_all_vacantes(driver , i)
+        for j in vacantes:
+            puesto = get_info_vacante(driver , j)
+            nombre = 'vacantes/vacante{0:04d}.json'.format(cont)
+            cont += 1
+            with open(nombre,  'w') as archivo_json:
+                json.dump(puesto , archivo_json)
 
-driver.close()
+            barrita.next()
+
+    driver.close()
+except:
+    driver.close()
 
 
 

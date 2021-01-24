@@ -1,0 +1,31 @@
+Traceback (most recent call last):
+  File "scrapper.py", line 109, in <module>
+    puesto = get_info_vacante(driver , j)
+  File "scrapper.py", line 75, in get_info_vacante
+    contenido = driver.find_element_by_xpath('/html/body/div[8]/div/div[1]/article/div[1]/div[2]')
+  File "/usr/local/lib/python3.7/site-packages/selenium/webdriver/remote/webdriver.py", line 394, in find_element_by_xpath
+    return self.find_element(by=By.XPATH, value=xpath)
+  File "/usr/local/lib/python3.7/site-packages/selenium/webdriver/remote/webdriver.py", line 978, in find_element
+    'value': value})['value']
+  File "/usr/local/lib/python3.7/site-packages/selenium/webdriver/remote/webdriver.py", line 321, in execute
+    self.error_handler.check_response(response)
+  File "/usr/local/lib/python3.7/site-packages/selenium/webdriver/remote/errorhandler.py", line 242, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.WebDriverException: Message: chrome not reachable
+  (Session info: headless chrome=88.0.4324.96)
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "scrapper.py", line 119, in <module>
+    driver.close()
+  File "/usr/local/lib/python3.7/site-packages/selenium/webdriver/remote/webdriver.py", line 688, in close
+    self.execute(Command.CLOSE)
+  File "/usr/local/lib/python3.7/site-packages/selenium/webdriver/remote/webdriver.py", line 321, in execute
+    self.error_handler.check_response(response)
+  File "/usr/local/lib/python3.7/site-packages/selenium/webdriver/remote/errorhandler.py", line 242, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.WebDriverException: Message: chrome not reachable
+  (Session info: headless chrome=88.0.4324.96)
+
