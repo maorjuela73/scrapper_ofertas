@@ -1,7 +1,12 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 import datetime
 import json
 from time import sleep
+
+
+options = Options()
+options.headless = True
 
 
 
@@ -20,7 +25,7 @@ def guardar(vacante , num):
     with open(nombre, 'w') as archivo_json:
         json.dump(vacante , archivo_json)
 
-driver = webdriver.Chrome()
+driver = webdriver.Chrome(options = options)
 
 cont = 1
 err = 0

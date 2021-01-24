@@ -1,4 +1,5 @@
 import base64
+from selenium.webdriver.chrome.options import Options
 import datetime
 from selenium import webdriver
 import json
@@ -106,7 +107,9 @@ def get_info_url(url):
 
 #MAIN   |vie ene 22 14:57:42 -05 2021|
 
-driver = webdriver.Chrome()
+options = Options()
+options.headless = True
+driver = webdriver.Chrome(options = options)
 err = 0
 i = 1
 cont = 0
