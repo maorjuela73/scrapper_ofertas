@@ -47,6 +47,7 @@ def procesar_un_empleo(driver , url_empleo):
     contenido_interesante = (full_content[:-3])
 
     datos = {
+        'url':url_empleo,
         'fecha':fecha,
         'provincia':provincia,
         'categoria':categoria,
