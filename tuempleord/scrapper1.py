@@ -16,7 +16,6 @@ def max_number(driver):
     print(max_number)
     return(max_number)
 
-
 def get_lista_empleos(driver , num):
     driver.get('https://www.tuempleord.do/page/{}/'.format(num))
     sleep(1)
@@ -58,13 +57,7 @@ def procesar_un_empleo(driver , url_empleo):
     return(datos)
 
 
-def scrapear_una_parte( ini , fin):
-    options = webdriver.ChromeOptions()
-    #options.add_argument('--disable-gpu')
-    #options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    driver = webdriver.Chrome(options = options)
+def scrapear_una_parte(driver , ini , fin):
     for i in range(ini, fin):
         lista =  get_lista_empleos(driver , i)
         for k,j in enumerate(lista):
@@ -80,30 +73,14 @@ def scrapear_una_parte( ini , fin):
             with open(nombre , 'w') as json_file:
                 json.dump(datos , json_file)
                 sleep(1)
-    driver.quit()
 
-driver = webdriver.Chrome()
-numero_maximo = max_number(driver)
-driver.quit()
-
+driver1 = webdriver.Chrome()
+numero_maximo = max_number(driver1)
 mitad = int(numero_maximo/2)
 
-N = 10
-thread_list = list()
+threading.Thread(target = scrapear_una_parte(driver1  , 1, mitad  )).start()
 
-# Start test
-
-for i in range(N):
-    t = threading.Thread(name='Test {}'.format(i), target=scrapear_una_parte(0,mitad))
-    t.start()
-    time.sleep(1)
-    print(t.name + ' started!')
-    thread_list.append(t)
-
-
-
-for thread in thread_list:
-    thread.join()
+driver1.close()
 
 
 
