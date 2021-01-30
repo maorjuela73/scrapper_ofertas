@@ -1,122 +1,82 @@
-from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
-from progress.bar import Bar
 import json
+import datetime
+from time import sleep
 from bs4 import BeautifulSoup
+import requests as r
 
 
 
+def max_number(driver):
+    driver.get('https://www.tuempleord.do/page/{}/'.format(2))
+    sleep(1)
+    max_number = driver.find_element_by_css_selector('body > div.contenedor > div > div.col-md-8.lista-de-trabajos > div.paginacion > a:nth-child(7)').get_attribute('innerText')
+    max_number = int(max_number.replace('.',""))
+    print(max_number)
+    return(max_number)
 
-#este metodo agarra todas las areas de trabajo y retorna una lista con ellas y su respectivo valor   |jue ene 21 18:07:09 -05 2021|
-def get_all_areas(driver):
-    driver.get('https://www.tuempleord.do/')
-    areas_box = driver.find_element_by_xpath('/html/body/div[3]/div/form/div[1]/select')
-    el_html = areas_box.get_attribute('innerHTML')
-    sopa  = BeautifulSoup(el_html , 'lxml')
-    elementos = sopa.findAll('option')
-    areas = []
-    for i in elementos:
+def get_lista_empleos(driver , num):
+    driver.get('https://www.tuempleord.do/page/{}/'.format(num))
+    sleep(1)
+    todo_el_html = driver.find_element_by_css_selector('body').get_attribute('innerHTML')
+    soup = BeautifulSoup(todo_el_html , 'lxml')
+    tags_empleos = soup.findAll('h2' , {'class':'resumido'})
+
+    lista_url_empleos = []
+    for i in tags_empleos:
         for j in i:
-            area  = {
-                'nombre':j ,
-                'value':i['value']
-            }
-            areas.append(area)
-
-    return(areas)
+            lista_url_empleos.append(j['href'])
+    return(lista_url_empleos)
 
 
-def scroll(driver):
-    try:
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    except:
-        pass
+def procesar_un_empleo(driver , url_empleo):
+    driver.get(url_empleo)
+    todo_el_html = driver.find_element_by_css_selector('body').get_attribute('innerHTML')
+    soup = BeautifulSoup(todo_el_html , 'lxml')
+    titulo = soup.find('h2' , {'class':'titulo-individual'}).getText()
+    fecha = soup.find('span' , {'class':'date'}).getText()
+    provincia = soup.find('a' , {'class':'pequeno provincia'}).getText()
+    categoria = soup.find('a' , {'class':'pequeno categoria'}).getText()
+    contenido = soup.findAll('div' , {'class':'contenido'})
 
-
-#este metodo agarra todas las provincias y retorna una lista con cada una de ellas   |jue ene 21 18:07:24 -05 2021|
-def get_all_provincias(driver):
-    driver.get('https://www.tuempleord.do/')
-    provincias_box = driver.find_element_by_xpath('/html/body/div[3]/div/form/div[2]/select')
-    el_html = provincias_box.get_attribute('innerHTML')
-    sopa = BeautifulSoup(el_html , 'lxml')
-    elementos = sopa.findAll('option')
-    provincias = []
-    for i in elementos:
+    full_content = []
+    for i in contenido:
         for j in i:
-            provincias.append(j)
-    return(provincias)
+            full_content.append(j)
+    contenido_interesante = (full_content[:-3])
 
-
-
-
-#dada una secion del paginador   |vie ene 22 10:23:43 -05 2021|
-def get_all_vacantes(driver , paginador ):
-    driver.get('https://www.tuempleord.do/page/{}/'.format(paginador))
-    body = driver.find_element_by_xpath('/html/body').get_attribute('innerHTML')
-    soup = BeautifulSoup(body , 'lxml')
-    resumidos = soup.findAll('h2' , {'class':'resumido'})
-
-    vacantes = []
-    for i in resumidos:
-        titulo = i.getText()
-#        url = i['href']
-        for j in i:
-            url = j['href']
-        vacante = {
-            'titulo':titulo,
-            'url':url
-        }
-        vacantes.append(vacante)
-    return(vacantes)
-
-
-def get_info_vacante(driver, vacante):
-    driver.get(vacante['url'])
-    contenido = driver.find_element_by_xpath('/html/body/div[8]/div/div[1]/article/div[1]/div[2]')
-    html_contenido = contenido.get_attribute('innerHTML')
-    soup = BeautifulSoup(html_contenido , 'lxml')
-    texto = soup.findAll('p')
-
-    total = {
-        'titulo':vacante['titulo'],
-        'url':vacante['url']
+    datos = {
+        'fecha':fecha,
+        'provincia':provincia,
+        'categoria':categoria,
+        'titulo':titulo,
+        'full_content':str(contenido_interesante),
+        'hora_subido':str(datetime.datetime.now())
     }
-    for i in texto:
-        descripcion = {}
-        elemento = i.getText()
-        lista = elemento.split('\n')
-        try:
-            descripcion[lista[0]] = lista[1]
-            total[lista[0]] = lista[1]
-        except:
-            pass
-    return(total)
+    return(datos)
 
 
+driver = webdriver.Chrome()
+numero_maximo = max_number(driver)
+for i in range(1, numero_maximo):
+    lista =  get_lista_empleos(driver , i)
+    for k,j in enumerate(lista):
+        print("processing ... {}".format(j))
+        datos = procesar_un_empleo(driver , j)
+        fecha = datetime.datetime.now()
+        año = str(fecha.year)
+        mes = str(fecha.month)
+        dia = str(fecha.day)
+        serial = str(((i-1) * 25) + k)
+        print(serial)
+        print(k,j)
+        nombre = f"vacantes/empleord-{año}-{mes}-{dia}-{serial}.json"
+        with open(nombre , 'w') as json_file:
+            json.dump(datos , json_file)
+            sleep(1)
 
+driver.close()
 
-
-try:
-    options = Options()
-    options.headless = True
-    cont = 1
-    driver = webdriver.Chrome(options = options)
-    maxi = 1896
-    barrita = Bar("progres ..." , max = maxi)
-    for i in range(1,maxi):
-        vacantes = get_all_vacantes(driver , i)
-        for j in vacantes:
-            puesto = get_info_vacante(driver , j)
-            nombre = 'vacantes/vacante{0:04d}.json'.format(cont)
-            cont += 1
-            with open(nombre,  'w') as archivo_json:
-                json.dump(puesto , archivo_json)
-
-            barrita.next()
-
-    driver.close()
-except:
-    driver.close()
 
 
 
