@@ -1,4 +1,5 @@
 from selenium import webdriver
+import threading
 import json
 import datetime
 from time import sleep
@@ -56,26 +57,31 @@ def procesar_un_empleo(driver , url_empleo):
     return(datos)
 
 
-driver = webdriver.Chrome()
-numero_maximo = max_number(driver)
-for i in range(1, numero_maximo):
-    lista =  get_lista_empleos(driver , i)
-    for k,j in enumerate(lista):
-        print("processing ... {}".format(j))
-        datos = procesar_un_empleo(driver , j)
-        fecha = datetime.datetime.now()
-        año = str(fecha.year)
-        mes = str(fecha.month)
-        dia = str(fecha.day)
-        serial = str(((i-1) * 25) + k)
-        print(serial)
-        print(k,j)
-        nombre = f"vacantes/empleord-{año}-{mes}-{dia}-{serial}.json"
-        with open(nombre , 'w') as json_file:
-            json.dump(datos , json_file)
-            sleep(1)
+def scrapear_una_parte(driver , ini , fin):
+    for i in range(ini, fin):
+        lista =  get_lista_empleos(driver , i)
+        for k,j in enumerate(lista):
+            print("processing ... {}".format(j))
+            datos = procesar_un_empleo(driver , j)
+            fecha = datetime.datetime.now()
+            año = str(fecha.year)
+            mes = str(fecha.month)
+            dia = str(fecha.day)
+            serial = str(((i-1) * 25) + k)
+            nombre = f"vacantes/empleord-{año}-{mes}-{dia}-{serial}.json"
+            with open(nombre , 'w') as json_file:
+                json.dump(datos , json_file)
+                sleep(1)
 
-driver.close()
+driver1 = webdriver.Chrome()
+driver2 = webdriver.Chrome()
+numero_maximo = max_number(driver1)
+mitad = int(numero_maximo/2)
+threading.Thread(target = scrapear_una_parte(driver2  , mitad, numero_maximo  )).start()
+threading.Thread(target = scrapear_una_parte(driver1  , 1, mitad  )).start()
+
+driver1.close()
+driver2.close()
 
 
 
