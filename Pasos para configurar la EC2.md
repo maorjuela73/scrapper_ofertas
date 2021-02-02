@@ -2,7 +2,7 @@
 
 ## Creación y configuración de la máquina
 
-- Crear la máquina EC2
+- Crear la máquina EC2 (las credenciales tienen pass qwerty123)
 - Descargar la llave .pem
 - Convertir la llave .pem en una .ppk
 - Conectarse via Putty o cualquier mecanismo con la llave
@@ -13,7 +13,7 @@ Los siguientes son los pasos necesarios para configurar el ambiente de ejecució
 
 - Instalar en la máquina git con `yum install git`
 - Clonar el código
-- Instalar miniconda
+- Instalar miniconda, de la página https://docs.conda.io/en/latest/miniconda.html se descarga un .sh y ese se ejecuta en la máquina
 - Cerrar la terminal y abrirla de nuevo
 - Crear un nuevo entorno en conda
 - Ejecutar el archivo de configuración para descargar los paquetes necesarios `conda env update`
