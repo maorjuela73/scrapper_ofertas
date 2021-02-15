@@ -76,7 +76,7 @@ def procesar_bloque(pag_inicial , pag_final):
             dia = str(fecha.day)
             serial = (((i-1) * 25) + k)
             serial = "{0:05d}".format(serial)
-            nombre = f"tuempleord/vacantes/empleord-{anio}-{mes}-{dia}-{serial}.json"
+            nombre = f"tuempleord/vacantes/tuempleord_{anio}-{mes}-{dia}_pag{i}-emp{k+1}.json"
 
             if not os.path.exists('tuempleord/vacantes'):
                 os.makedirs('tuempleord/vacantes')
