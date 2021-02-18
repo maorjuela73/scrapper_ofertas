@@ -6,7 +6,7 @@ import time
 from time import sleep
 from bs4 import BeautifulSoup
 import os
-
+import pandas as pd
 
 def get_num_pages(driver):
     driver.get('https://www.tuempleord.do/page/{}/'.format(2))
@@ -58,7 +58,7 @@ def procesar_url_empleo(driver , url_empleo):
     return(datos)
 
 
-def procesar_bloque(pag_inicial , pag_final):
+def procesar_bloque(df_resultados, pag_inicial , pag_final):
     options = webdriver.ChromeOptions()
     options.add_argument('--disable-gpu')
     options.add_argument('--headless')
@@ -84,6 +84,10 @@ def procesar_bloque(pag_inicial , pag_final):
             with open(nombre , 'w') as json_file:
                 json.dump(datos , json_file)
                 sleep(1)
+
+            global df_ofertas
+            df_ofertas = df_resultados.append(datos, ignore_index=True)
+
     driver.quit()
 
 
@@ -103,15 +107,16 @@ driver = webdriver.Chrome(options=options)
 num_pages = get_num_pages(driver)
 driver.quit()
 
-num_chunks = 8 # TODO: A calcular de la máquina
+num_chunks = 2 # TODO: A calcular de la máquina
 data_cuts = cuts(num_pages, num_chunks)
+df_ofertas = pd.DataFrame(columns=['fecha', 'provincia', 'categoria', 'titulo', 'full_content', 'hora_subido'])
 
 thread_list = list()
 
 for x , cut in enumerate(data_cuts):
     if (x < len(data_cuts) - 1 ):
         print('Job # ', x + 1 ,[data_cuts[x] + 1 , data_cuts[x+1]])
-        t = threading.Thread(name='Test {}'.format(x), target=procesar_bloque, args=(data_cuts[x] + 1 , data_cuts[x + 1], ) )
+        t = threading.Thread(name='Test {}'.format(x), target=procesar_bloque, args=(df_ofertas, data_cuts[x] + 1 , data_cuts[x + 1], ) )
         thread_list.append(t)
         t.start()
         print(t.name + ' started!')
@@ -126,4 +131,4 @@ for x , cut in enumerate(data_cuts):
 for thread in thread_list:
     thread.join()
 
-print('Test completed!')
+print('Data retrieval completed!')
