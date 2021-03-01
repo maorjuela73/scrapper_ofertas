@@ -79,7 +79,7 @@ def data_retrieval(url):
         registro['Estado']=''
         
     try:
-        experiencia=lista_item[1].findNext('br').text.strip()
+        experiencia=lista_item[1].next_element.next_element.next_element
         registro['Experiencia']=experiencia
     except:
         print('no se recuepro experiencia')
@@ -100,21 +100,21 @@ def data_retrieval(url):
         registro['Contrato']=''
     
     try:
-        jornada=lista_item[3].findNext('br').get_text(strip=True)
+        jornada=lista_item[3].next_element.next_element.next_element
         registro['Jornada']=jornada
     except:
         print('no se recuepro jornada')
         registro['Jornada']=''
     
     try:
-        salario=lista_item[4].findNext('br').get_text(strip=True)
+        salario=lista_item[4].next_element.next_element.next_element
         registro['Salario']=salario
     except:
         print('no se recuepro salario')
         registro['Salario']=''
     
     try:
-        publicado=lista_item[5].findNext('br').get_text(strip=True)
+        publicado=lista_item[5].next_element.next_element.next_element.next_element.next_element
         registro['Publicado']=publicado
     except:
         print('no se recuepro publicado')
