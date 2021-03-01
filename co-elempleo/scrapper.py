@@ -47,7 +47,7 @@ def data_retrieval(url):
         oferta = offer_data.find('span', {'class': 'js-jobOffer-title'}).text.strip()
         registro['titulo_oferta']= oferta
     except:
-        oferta = ''
+        registro['titulo_oferta'] = ''
 
     # Salario
     try:
@@ -55,7 +55,7 @@ def data_retrieval(url):
         registro['salario']= salario
 
     except:
-        salario = ''
+        registro['salario'] = ''
 
     # Ciudad
     try:
@@ -63,14 +63,14 @@ def data_retrieval(url):
         registro['ciudad']= ciudad
 
     except:
-        ciudad = ''
+        registro['ciudad'] = ''
 
     # Fecha de publicacion
     try:
         fecha_publicacion = offer_data.find('span', {'class': 'js-publish-date'}).text.strip()
         registro['fecha_publicacion']= fecha_publicacion
     except:
-        fecha_publicacion = ''
+        registro['fecha_publicacion'] = ''
 
 
     # Area
@@ -78,21 +78,21 @@ def data_retrieval(url):
         area = offer_data.find('span', {'class': 'js-position-area'}).text.strip()
         registro['area']= area
     except:
-        area = ''
+        registro['area'] = ''
 
     # Numero de vacantes
     try:
         no_vacantes = re.sub(r' +', " ", re.sub(r'[\n\r]', '', offer_data.find('p', {'class': 'js-vacancy'}).text).strip())
         registro['num_vacantes']= no_vacantes
     except:
-        no_vacantes = ''
+        registro['num_vacantes'] = ''
 
     # Profesion
     try:
         profesion = offer_data.find('span', {'class': 'js-profession'}).text.strip()
         registro['profesion']= profesion
     except:
-        profesion = ''
+        registro['profesion'] = ''
 
     # Selecionando la segunda 'tarjeta' para obtener data
     description_data = soup.find('div', 'description-block')
@@ -102,7 +102,7 @@ def data_retrieval(url):
         descripcion_general = description_data.text.strip().replace('\r', '').replace('\n', '')  # .decode('UTF-8')
         registro['descripcion_general'] = descripcion_general
     except:
-        descripcion_general = ''
+        registro['descripcion_general']  = ''
 
     try:
         additional_data_categ = soup.select_one('i.fa.fa-level-down.fa-fw').next_sibling.next_sibling.text.strip().replace('\r', '').replace('\n', '')
@@ -132,6 +132,7 @@ def data_retrieval(url):
         registro['competencias'] = competencias
     except:
         print("No habían competencias")
+        registro['competencias'] = ""
 
     id_job_by_url = re.search("\d+$",url)[0]
 
