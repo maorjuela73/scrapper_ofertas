@@ -144,7 +144,7 @@ def data_retrieval(url):
 
 
 options = webdriver.ChromeOptions()
-options.add_argument('--headless')
+# options.add_argument('--headless')
 options.add_argument('--no-sandbox')
 # options.add_argument('--disable-dev-shm-usage')
 # open it, go to a website, and get results
@@ -168,8 +168,9 @@ page_before_click = 0
 while True:
 
   soup = BeautifulSoup(driver.page_source, features='lxml')
-  pagination = soup.find('ul', {'class': 'pagination ee-mod '})
-  current_page_tag = pagination.find('li',{'class': ' active '})
+  # TODO: Espaciones en ee-mod_ y en _active_
+  pagination = soup.find('ul', {'class': 'pagination ee-mod'})
+  current_page_tag = pagination.find('li',{'class': 'active'})
 
   current_page = current_page_tag.text.split()[0]
 
