@@ -120,6 +120,12 @@ def data_retrieval(url):
         registro['tipo_contrato'] = additional_data_tipocontrato
     except:
         print("Hubo un problema buscando algún dato complementario")
+        registro['id_empleo'] = ""
+        registro['categoria'] = ""
+        registro['nivel_educativo'] = ""
+        registro['sector'] = ""
+        registro['experiencia'] = ""
+        registro['tipo_contrato'] = ""
 
     try:
         competencias = [x.text.strip() for x in soup.select_one('.requirements-content').select('span')]
