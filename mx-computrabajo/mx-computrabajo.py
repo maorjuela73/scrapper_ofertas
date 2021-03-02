@@ -21,11 +21,15 @@ def get_num_pages():
     #Retorna urls de las ofertas de trabajo de la pagina
     rango_paginas=soup.find('div','pg_grid')
     num_pages=rango_paginas.find_all('span')[-1].text
-    num_pages = int(num_pages.replace('.',""))
+    num_pages = int(num_pages.replace('.',"").replace(',',""))
     print(f"There are {num_pages} pages to read")
     return(num_pages)
 
- def get_urls_empleos(num):
+def get_paginator_length(num,dem):
+    legt=math.ceil(num/dem)
+    return(legt)
+
+def get_urls_empleos(num):
     url='https://www.computrabajo.com.mx/ofertas-de-trabajo/?p={}'.format(num)
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
     response = requests.get(url, headers=headers)
@@ -39,7 +43,7 @@ def get_num_pages():
     
     return(lista_url_empleos)
 
- def data_retrieval(url):
+def data_retrieval(url):
 
     fecha_busqueda = datetime.today().strftime('%Y-%m-%d-%H-%M')
 
