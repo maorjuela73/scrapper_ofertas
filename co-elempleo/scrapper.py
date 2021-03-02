@@ -72,7 +72,6 @@ def data_retrieval(url):
     except:
         registro['fecha_publicacion'] = ''
 
-
     # Area
     try:
         area = offer_data.find('span', {'class': 'js-position-area'}).text.strip()
@@ -105,31 +104,45 @@ def data_retrieval(url):
         registro['descripcion_general']  = ''
 
     try:
-        additional_data_categ = soup.select_one('i.fa.fa-level-down.fa-fw').next_sibling.next_sibling.text.strip().replace('\r', '').replace('\n', '')
-        additional_data_edulevel = soup.select_one('i.fa.fa-graduation-cap.fa-fw').next_sibling.next_sibling.text.strip().replace('\r', '').replace('\n', '')
-        additional_data_sector = soup.select_one('i.fa.fa-puzzle-piece.fa-fw').next_sibling.next_sibling.text.strip().replace('\r', '').replace('\n', '')
-        additional_data_exp = soup.select_one('i.fa.fa-calendar.fa-fw').next_sibling.next_sibling.text.strip().replace('\r', '').replace('\n', '')
         additional_data_tipocontrato = soup.select_one('i.fa.fa-file-text-o.fa-fw').next_sibling.next_sibling.text.strip().replace('\r', '').replace('\n', '')
-        additional_data_idempleo = soup.select_one('i.fa.fa-barcode.fa-fw').next_sibling.next_sibling.text.strip().replace('\r', '').replace('\n', '')
-
-        registro['id_empleo'] = additional_data_idempleo
-        registro['categoria'] = additional_data_categ
-        registro['nivel_educativo'] = additional_data_edulevel
-        registro['sector'] = additional_data_sector
-        registro['experiencia'] = additional_data_exp
         registro['tipo_contrato'] = additional_data_tipocontrato
     except:
-        print("Hubo un problema buscando algún dato complementario")
-        registro['id_empleo'] = ""
-        registro['categoria'] = ""
-        registro['nivel_educativo'] = ""
-        registro['sector'] = ""
-        registro['experiencia'] = ""
         registro['tipo_contrato'] = ""
 
     try:
+        additional_data_edulevel = soup.select_one('i.fa.fa-graduation-cap.fa-fw').next_sibling.next_sibling.text.strip().replace('\r', '').replace('\n', '')
+        registro['nivel_educativo'] = additional_data_edulevel
+    except:
+        registro['nivel_educativo'] = ""
+
+    try:
+        additional_data_categ = soup.select_one('i.fa.fa-level-down.fa-fw').next_sibling.next_sibling.text.strip().replace('\r', '').replace('\n', '')
+        registro['categoria'] = additional_data_categ
+    except:
+        registro['categoria'] = ""
+
+    try:
+        additional_data_sector = soup.select_one('i.fa.fa-puzzle-piece.fa-fw').next_sibling.next_sibling.text.strip().replace('\r', '').replace('\n', '')
+        registro['sector'] = additional_data_sector
+    except:
+        registro['sector'] = ""
+
+    try:
+        additional_data_exp = soup.select_one('i.fa.fa-calendar.fa-fw').next_sibling.next_sibling.text.strip().replace('\r', '').replace('\n', '')
+        registro['experiencia'] = additional_data_exp
+    except:
+        registro['experiencia'] = ""
+
+    try:
+        additional_data_idempleo = soup.select_one('i.fa.fa-barcode.fa-fw').next_sibling.next_sibling.text.strip().replace('\r', '').replace('\n', '')
+        registro['id_empleo'] = additional_data_idempleo
+    except:
+        registro['id_empleo'] = ""
+
+    try:
         competencias = [x.text.strip() for x in soup.select_one('.requirements-content').select('span')]
-        registro['competencias'] = competencias
+        competencias_str = ','.join(competencias)
+        registro['competencias'] = competencias_str
     except:
         print("No habían competencias")
         registro['competencias'] = ""
