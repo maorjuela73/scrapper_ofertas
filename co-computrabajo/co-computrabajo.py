@@ -123,7 +123,7 @@ def data_retrieval(url):
 
     except:
         registro['Requerimientos']=''
-        print('no se recupero requeriminetos')
+        print('no se recupero requerimientos')
     
     #Rating empresa
     try:
