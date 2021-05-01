@@ -25,7 +25,7 @@ def get_num_pages():
     print(f"There are {num_pages} pages to read")
     return(num_pages)
 
-def get_paginator_lengthw(num,dem):
+def get_paginator_length(num,dem):
     legt=math.ceil(num/dem)
     return(legt)
 
