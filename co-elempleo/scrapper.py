@@ -13,6 +13,7 @@ from selenium.webdriver.common.by import By
 import pandas as pd
 import numpy as np
 import threading
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 # Retorna los links existentes en una página actual
@@ -164,11 +165,11 @@ def data_retrieval(url):
 
 
 options = webdriver.ChromeOptions()
-options.add_argument('--headless')
+# options.add_argument('--headless')
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
 # open it, go to a website, and get results
-driver = webdriver.Chrome('chromedriver',options=options)
+driver = webdriver.Chrome(ChromeDriverManager().install() ,options=options)
 
 url='https://www.elempleo.com/co/ofertas-empleo/'
 
@@ -176,11 +177,16 @@ driver.get(url)
 
 # Acepta cookies
 WebDriverWait(driver,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,'a.btn btn-default submit-politics btnAcceptPolicyNavigationCO'.replace(' ','.')))).click()
+# Marcando la casilla de hoy y ayer
+WebDriverWait(driver,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,'#publishDate1'.replace(' ','.')))).click()
+# Esperando a que se vaya el spinner
+WebDriverWait(driver,10).until_not(EC.visibility_of(driver.find_element_by_css_selector("body > div.text-center.ee-global-spinner-wrapper.js-spinner")))
 # Selecionando para ver de a 100
 WebDriverWait(driver,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,'select.form-control js-results-by-page'.replace(' ','.')))).click()
 WebDriverWait(driver,10).until(EC.presence_of_element_located((By.XPATH,'/html/body/div[8]/div[4]/div[1]/div[4]/div/form/div/select/option[3]'))).click()
 # Esperando a que se vaya el spinner
 WebDriverWait(driver,10).until_not(EC.visibility_of(driver.find_element_by_css_selector("body > div.text-center.ee-global-spinner-wrapper.js-spinner")))
+
 
 # Contador de cambios de página
 page_before_click = 0
