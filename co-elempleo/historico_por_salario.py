@@ -179,48 +179,63 @@ driver = webdriver.Chrome(ChromeDriverManager().install() ,options=options)
 url='https://www.elempleo.com/co/ofertas-empleo/'
 
 driver.get(url)
+soup = BeautifulSoup(driver.page_source, features='lxml')
+
+idsBoxes = []
+
+for tag in soup.findAll('input', {'type': 'checkbox'}) :
+    idsBoxes.append('#{}'.format(tag.get('id')))
 
 # Acepta cookies
 WebDriverWait(driver,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,'a.btn btn-default submit-politics btnAcceptPolicyNavigationCO'.replace(' ','.')))).click()
 # Selecionando para ver de a 100
 WebDriverWait(driver,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,'select.form-control js-results-by-page'.replace(' ','.')))).click()
-WebDriverWait(driver,10).until(EC.presence_of_element_located((By.XPATH,'/html/body/div[8]/div[4]/div[1]/div[4]/div/form/div/select/option[3]'))).click()
-# Esperando a que se vaya el spinner
-WebDriverWait(driver,10).until_not(EC.visibility_of(driver.find_element_by_css_selector("body > div.text-center.ee-global-spinner-wrapper.js-spinner")))
 
-# Contador de cambios de página
-page_before_click = 0
+for i in range(1, idsBoxes.__len__() -1):
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[8]/div[4]/div[1]/div[4]/div/form/div/select/option[3]'))).click()
 
-while True:
+    if i == 1:
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, idsBoxes[i].replace(' ', '.')))).click()
+    else:
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, idsBoxes[i].replace(' ', '.')))).click()
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, idsBoxes[i-1].replace(' ', '.')))).click()
 
-  soup = BeautifulSoup(driver.page_source, features='lxml')
-  # TODO: Espaciones en ee-mod_ y en _active_
-  pagination = soup.find('ul', {'class': 'pagination ee-mod'})
-  current_page_tag = pagination.find('li',{'class': 'active'})
+    # Esperando a que se vaya el spinner
+    WebDriverWait(driver,10).until_not(EC.visibility_of(driver.find_element_by_css_selector("body > div.text-center.ee-global-spinner-wrapper.js-spinner")))
 
-  current_page = current_page_tag.text.split()[0]
+    # Contador de cambios de página
+    page_before_click = 0
 
-  links = get_links(driver)
+    while True:
 
-  thread_list = list()
+      soup = BeautifulSoup(driver.page_source, features='lxml')
+      # TODO: Espaciones en ee-mod_ y en _active_
+      pagination = soup.find('ul', {'class': 'pagination ee-mod'})
+      current_page_tag = pagination.find('li',{'class': 'active'})
 
-  for x in links:
-      t = threading.Thread(name='PROCESSING {}'.format(x), target=data_retrieval, args=(x,))
-      thread_list.append(t)
-      t.start()
-      print(t.name + ' started!')
+      current_page = current_page_tag.text.split()[0]
 
-  for thread in thread_list:
-      thread.join()
+      links = get_links(driver)
 
-  print(f'PAGE {current_page} --- Data retrieval completed!')
+      thread_list = list()
 
-  if page_before_click != current_page:
-    page_before_click = current_page
-    element = WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,'a.js-btn-next'.replace(' ','.'))))
-    element.click()
-    WebDriverWait(driver, 10).until_not(EC.visibility_of(driver.find_element_by_css_selector("body > div.text-center.ee-global-spinner-wrapper.js-spinner")))
-  else:
-    driver.close()
-    print(f'se termina el ciclo porque la página enterior {page_before_click} es igual a la actual {current_page}')
-    break
+      for x in links:
+          t = threading.Thread(name='PROCESSING {}'.format(x), target=data_retrieval, args=(x,))
+          thread_list.append(t)
+          t.start()
+          print(t.name + ' started!')
+
+      for thread in thread_list:
+          thread.join()
+
+      print(f'PAGE {current_page} --- Data retrieval completed!')
+
+      if page_before_click != current_page:
+        page_before_click = current_page
+        element = WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.CSS_SELECTOR,'a.js-btn-next'.replace(' ','.'))))
+        element.click()
+        WebDriverWait(driver, 10).until_not(EC.visibility_of(driver.find_element_by_css_selector("body > div.text-center.ee-global-spinner-wrapper.js-spinner")))
+      else:
+        driver.close()
+        print(f'se termina el ciclo porque la página enterior {page_before_click} es igual a la actual {current_page}')
+        break
