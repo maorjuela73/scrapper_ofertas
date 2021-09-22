@@ -166,7 +166,7 @@ def data_retrieval(url):
 
 
 options = webdriver.ChromeOptions()
-options.add_argument('--headless')
+# options.add_argument('--headless')
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
 
@@ -183,16 +183,18 @@ soup = BeautifulSoup(driver.page_source, features='lxml')
 
 idsBoxes = []
 
-for tag in soup.findAll('input', {'type': 'checkbox'}) :
+for tag in soup.findAll('input', {'type': 'checkbox'}):
     idsBoxes.append('#{}'.format(tag.get('id')))
+
+idsBoxes = [x for x in idsBoxes if x != '#None']
 
 # Acepta cookies
 WebDriverWait(driver,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,'a.btn btn-default submit-politics btnAcceptPolicyNavigationCO'.replace(' ','.')))).click()
 # Selecionando para ver de a 100
 WebDriverWait(driver,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,'select.form-control js-results-by-page'.replace(' ','.')))).click()
+WebDriverWait(driver,10).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[8]/div[4]/div[1]/div[4]/div/form/div/select/option[3]'))).click()
 
 for i in range(1, idsBoxes.__len__() -1):
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[8]/div[4]/div[1]/div[4]/div/form/div/select/option[3]'))).click()
 
     if i == 1:
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, idsBoxes[i].replace(' ', '.')))).click()
